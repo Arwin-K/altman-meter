@@ -21,8 +21,8 @@ Everything runs on your Mac. No network access, no accounts, no third-party code
 Either:
 
 ```sh
-git clone https://github.com/<owner>/AltmanMeter.git
-cd AltmanMeter
+git clone https://github.com/Arwin-K/altman-meter.git
+cd altman-meter
 ```
 
 or, on the GitHub page, click **Code → Download ZIP**, then double-click the ZIP and open the folder.
@@ -240,5 +240,3 @@ downloads.** To publish a version anyone can install:
      ```
      (Create the `notary` profile once with `xcrun notarytool store-credentials`.)
 4. Upload the .zip or .dmg to **GitHub Releases**. Don't commit it to the repo.
-
-# altman-meter
