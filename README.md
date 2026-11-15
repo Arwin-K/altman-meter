@@ -214,8 +214,4 @@ downloads.** To publish a version anyone can install:
      (Create the `notary` profile once with `xcrun notarytool store-credentials`.)
 4. Upload the .zip or .dmg to **GitHub Releases**. Don't commit it to the repo.
 
-## 12. Disclaimer
-
-Parody. The boss is an original character, not affiliated with or endorsed by any real person or
-company.
 # altman-meter
