@@ -84,6 +84,8 @@ Then quit any running copy, put the app in /Applications and open it:
 ```sh
 pkill -x AltmanMeter; rm -rf /Applications/AltmanMeter.app
 ditto build/Build/Products/Release/AltmanMeter.app /Applications/AltmanMeter.app
+# Stop macOS from sending widget clicks to the copy in build/:
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u build/Build/Products/Release/AltmanMeter.app
 open /Applications/AltmanMeter.app
 killall chronod   # makes macOS rescan widgets right away
 ```
@@ -99,13 +101,25 @@ compile check that doesn't need a team.
 3. Choose **small**, **medium** or **large**.
 4. Drag it onto the desktop next to your other widgets, then click **Done**.
 
+**Clicking the widget:**
+- **RAM** (the row marked ›, or anywhere on the small widget) opens **Activity Monitor on its
+  Memory tab**. If Activity Monitor is already open on a different tab, it quits and reopens on
+  Memory, because it has no way to switch tabs from outside.
+- **Disk free** opens **System Settings → General → Storage**.
+- **His face** pokes him.
+
+The rows in the menu bar panel work the same way.
+
 ## 6. Use the menu bar item
 
 - Look near the right end of the menu bar for a small icon with a percentage, like 🔥 62%. The icon
   changes with the boss's mood: a flame when furious, a storm cloud when annoyed, a question mark
   when confused. It updates every 5 seconds.
 - **Click it** to open the panel. It shows the same card as the medium widget (face, quote, RAM,
-  disk, battery), refreshing every 2 seconds while it's open.
+  disk, battery), refreshing every 2 seconds while it's open. Here he's animated: he shakes when
+  furious, sways when annoyed and tilts his head when confused.
+- **Poke him:** click his face, in the panel or on the desktop widget, for a reaction or a new
+  line. Poking the widget also takes fresh readings.
 - **Menu bar shows:** pick *Icon only*, *RAM %* or *RAM GB*.
 - **Open at login:** turn it on to start Altman Meter when you log in. macOS may ask you to approve
   it; if the panel says "Needs your approval", click **Open Login Items…** and switch on
@@ -144,6 +158,10 @@ menu bar apps, or ⌘-drag less important icons out of the menu bar to make room
 **Battery says "No battery"**
 That's expected on desktop Macs (iMac, Mac mini, Mac Studio, Mac Pro).
 
+**Clicking RAM or Disk free does nothing**
+The click goes through the Altman Meter app, so it must be installed in /Applications. Delete any
+other copies (old Xcode build folders count) so macOS doesn't send the click to the wrong one.
+
 **A value shows "—"**
 That reading failed. The app keeps running and tries again on the next refresh.
 
@@ -168,13 +186,26 @@ access, and send nothing anywhere.
 ## 10. Customize
 
 - **When he's furious, and what he says:** `Shared/Mood.swift`. Change
-  `furiousBelowRAMFraction` (default `0.60`, i.e. 60%) and edit the `quotes` lists. Keep each line
+  `furiousBelowRAMFraction` (default `0.60`, i.e. 60%) and edit the `lines` lists. Keep each line
   under about 75 characters so it fits the widgets.
-- **His face:** `Shared/BossFaceView.swift`. By default he's a drawn cartoon. To use photos
-  instead, put square images named `boss-furious.jpg`, `boss-annoyed.jpg` and `boss-confused.jpg`
-  (about 320×320 px; widgets reject large images) in `Shared/Photos/` and rebuild. The steam,
-  brows and teeth are drawn on top; their positions are in `FaceGeometry`. `Shared/Photos/` is in
-  `.gitignore`, so use only images you have the right to use, and don't commit them.
+- **His face:** `Shared/BossFaceView.swift`. By default he's a drawn cartoon in a sticker border.
+  To use photos instead, turn each one into a cut-out "sticker" PNG with the included tool. It
+  runs entirely on your Mac using Apple's Vision framework: it removes the background, cuts at
+  the jawline and adds a white border.
+
+  ```sh
+  swiftc -O Tools/MakeSticker.swift -o /tmp/makesticker
+  /tmp/makesticker photo1.jpg Shared/Photos/boss-annoyed.png
+  /tmp/makesticker photo2.jpg Shared/Photos/boss-furious.png 70 40 14 400 1   # 1 = red face
+  /tmp/makesticker photo3.jpg Shared/Photos/boss-confused.png
+  ```
+
+  The optional numbers are explained at the top of the tool. If the top of the head is cut off
+  in the photo, the 2nd number (e.g. `40`) extends the hair upward. Rebuild afterwards. The tool
+  prints where the brows and mouth landed; the angry brows and teeth are positioned from those in
+  `FaceGeometry.furiousPhoto`. `Shared/Photos/` is in `.gitignore`, so use only images you have
+  the right to use, and don't commit them.
+- **Poke reactions:** `Mood.pokeReactions` in `Shared/Mood.swift`.
 - **Refresh timings:** `Shared/Constants.swift`.
 
 **Which folder builds into which target.** The project uses Xcode 16 "synchronized folders":
@@ -185,7 +216,7 @@ any file you drop into a folder is compiled into that folder's target automatica
 | `Shared/` | app **and** widget | stats model and reader, formatters, mood and quotes, face, stat rows, the widget card |
 | `AltmanMeter/` | app only | app entry point, menu bar label and panel, settings, login item, assets/icon |
 | `AltmanMeterWidget/` | widget only | timeline provider, small/medium/large views, widget bundle |
-| `Config/` | not compiled | `Base.xcconfig`, widget `Info.plist`, entitlements |
+| `Config/` | not compiled | `Base.xcconfig`, app and widget `Info.plist`s (the app's adds the `altmanmeter://` link scheme), entitlements |
 
 Open any view file in Xcode and show the canvas (⌥⌘↩) to see SwiftUI previews of each widget size
 and the menu bar panel.
