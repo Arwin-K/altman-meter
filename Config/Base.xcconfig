@@ -1,0 +1,26 @@
+// Base.xcconfig — project-level settings shared by BOTH targets.
+//
+// Make it yours:
+//   BUNDLE_ID_PREFIX  something unique to you, e.g. com.yourname
+//   DEVELOPMENT_TEAM  your 10-character Team ID (see README → "Make it yours")
+//
+// Set the team ONLY here. If a target sets its own DEVELOPMENT_TEAM, the app and
+// the widget can end up signed by different teams and macOS refuses to load the
+// widget ("Embedded binary is not signed with the same certificate as the parent app").
+
+BUNDLE_ID_PREFIX = com.karirarwin
+DEVELOPMENT_TEAM = BU763PB477
+
+CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = Apple Development
+ENABLE_HARDENED_RUNTIME = YES
+
+SDKROOT = macosx
+MACOSX_DEPLOYMENT_TARGET = 14.0
+SWIFT_VERSION = 5.0
+
+MARKETING_VERSION = 1.0
+CURRENT_PROJECT_VERSION = 1
+
+APP_BUNDLE_ID = $(BUNDLE_ID_PREFIX).AltmanMeter
+WIDGET_BUNDLE_ID = $(BUNDLE_ID_PREFIX).AltmanMeter.Widget

@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Xcode per-user files and build output
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+*.xcarchive
+
+# Release artifacts (upload these to GitHub Releases, don't commit them)
+*.dmg
+*.zip
+
+# Local-only face photos. They're third-party press photos of a real person,
+# so they stay on this Mac. Without them the app draws its own cartoon boss.
+Shared/Photos/

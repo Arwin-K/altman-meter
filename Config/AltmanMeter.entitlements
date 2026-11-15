@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<!-- Read/write Activity Monitor's "SelectedTab" so the RAM link opens its Memory tab. -->
+	<key>com.apple.security.temporary-exception.shared-preference.read-write</key>
+	<array>
+		<string>com.apple.ActivityMonitor</string>
+	</array>
+	<!-- Lets the RAM link quit and reopen Activity Monitor when it's open on another tab. -->
+	<key>com.apple.security.temporary-exception.apple-events</key>
+	<array>
+		<string>com.apple.ActivityMonitor</string>
+	</array>
+</dict>
+</plist>

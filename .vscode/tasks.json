@@ -1,0 +1,20 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Check it compiles (no signing)",
+      "type": "shell",
+      "command": "xcodebuild -quiet -project AltmanMeter.xcodeproj -scheme AltmanMeter -configuration Debug -derivedDataPath build CODE_SIGNING_ALLOWED=NO build",
+      "group": "build",
+      "problemMatcher": ["$swiftc"]
+    },
+    {
+      "label": "Build and run",
+      "detail": "Signed Release build, installed to /Applications (where widgets and login items work best), then opened.",
+      "type": "shell",
+      "command": "xcodebuild -quiet -project AltmanMeter.xcodeproj -scheme AltmanMeter -configuration Release -derivedDataPath build -allowProvisioningUpdates build && (pkill -x AltmanMeter; sleep 1; rm -rf /Applications/AltmanMeter.app && ditto build/Build/Products/Release/AltmanMeter.app /Applications/AltmanMeter.app && /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u build/Build/Products/Release/AltmanMeter.app; open /Applications/AltmanMeter.app)",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$swiftc"]
+    }
+  ]
+}
