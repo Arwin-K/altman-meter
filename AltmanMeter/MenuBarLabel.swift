@@ -21,6 +21,6 @@ struct MenuBarLabel: View {
                 icon
             }
         }
-        .accessibilityLabel("Altman Meter: boss is \(mood.word.lowercased()), RAM \(StatFormat.percent(stats.ramUsedFraction)) used")
+        .accessibilityLabel("Altman Meter: Sam Altman is \(mood.word.lowercased()), RAM \(StatFormat.percent(stats.ramUsedFraction)) used")
     }
 }

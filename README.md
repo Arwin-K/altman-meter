@@ -113,7 +113,7 @@ The rows in the menu bar panel work the same way.
 ## 6. Use the menu bar item
 
 - Look near the right end of the menu bar for a small icon with a percentage, like 🔥 62%. The icon
-  changes with the boss's mood: a flame when furious, a storm cloud when annoyed, a question mark
+  changes with Sam Altman's mood: a flame when furious, a storm cloud when annoyed, a question mark
   when confused. It updates every 5 seconds.
 - **Click it** to open the panel. It shows the same card as the medium widget (face, quote, RAM,
   disk, battery), refreshing every 2 seconds while it's open. Here he's animated: he shakes when
@@ -134,7 +134,7 @@ There's no Dock icon and no window. The menu bar item is the whole app.
   roughly every **15 minutes**. macOS decides the exact timing to save battery, so it can be later.
   Use **Refresh desktop widget** in the panel to ask for one now.
 - **Menu bar:** live, every 5 seconds, and every 2 seconds while the panel is open.
-- **Boss lines** rotate about every 10 minutes.
+- **Sam Altman's lines** rotate about every 10 minutes.
 
 ## 8. Troubleshooting
 
@@ -185,26 +185,29 @@ access, and send nothing anywhere.
 
 ## 10. Customize
 
-- **When he's furious, and what he says:** `Shared/Mood.swift`. Change
+- **Sam Altman's moods and lines:** `Shared/Mood.swift`. Change
   `furiousBelowRAMFraction` (default `0.60`, i.e. 60%) and edit the `lines` lists. Keep each line
   under about 75 characters so it fits the widgets.
-- **His face:** `Shared/BossFaceView.swift`. By default he's a drawn cartoon in a sticker border.
-  To use photos instead, turn each one into a cut-out "sticker" PNG with the included tool. It
-  runs entirely on your Mac using Apple's Vision framework: it removes the background, cuts at
-  the jawline and adds a white border.
+- **Sam Altman's face:** `Shared/AltmanFaceView.swift`. The three transparent photo stickers in
+  `Shared/Photos/` are included, so a fresh build uses the same faces in the app and widgets. The
+  app draws an original cartoon if a sticker is missing. To make or replace a sticker, use an
+  image you have permission to distribute and run the included tool. It uses Apple's Vision
+  framework on your Mac to remove the background, cut at the jawline, and add a white border.
 
   ```sh
-  swiftc -O Tools/MakeSticker.swift -o /tmp/makesticker
-  /tmp/makesticker photo1.jpg Shared/Photos/boss-annoyed.png
-  /tmp/makesticker photo2.jpg Shared/Photos/boss-furious.png 70 40 14 400 1   # 1 = red face
-  /tmp/makesticker photo3.jpg Shared/Photos/boss-confused.png
+  mkdir -p Shared/Photos
+  swiftc -O Tools/MakeAltmanSticker.swift -o /tmp/make-altman-sticker
+  /tmp/make-altman-sticker annoyed-source.jpg Shared/Photos/altman-annoyed.png
+  /tmp/make-altman-sticker furious-source.jpg Shared/Photos/altman-furious.png 70 40 14 400 1
+  /tmp/make-altman-sticker confused-source.jpg Shared/Photos/altman-confused.png
   ```
 
   The optional numbers are explained at the top of the tool. If the top of the head is cut off
   in the photo, the 2nd number (e.g. `40`) extends the hair upward. Rebuild afterwards. The tool
-  prints where the brows and mouth landed; the angry brows and teeth are positioned from those in
-  `FaceGeometry.furiousPhoto`. `Shared/Photos/` is in `.gitignore`, so use only images you have
-  the right to use, and don't commit them.
+  prints where the brows and mouth landed; the angry brows and teeth use the alignment in
+  `FaceGeometry.furiousPhoto`, which is tuned to `altman-furious.png`. The included stickers are
+  provided with permission for use in this project. Confirm source terms before reusing them
+  outside Altman Meter.
 - **Poke reactions:** `Mood.pokeReactions` in `Shared/Mood.swift`.
 - **Refresh timings:** `Shared/Constants.swift`.
 

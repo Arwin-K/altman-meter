@@ -57,7 +57,7 @@ struct SystemStats: Equatable, Sendable {
 extension SystemStats {
     private static let gib: UInt64 = 1 << 30
 
-    /// Plenty of free RAM, so the boss is furious.
+    /// Plenty of free RAM, so Sam Altman is furious.
     static let previewFurious = SystemStats(
         sampledAt: .now,
         ramTotalBytes: 16 * gib,
@@ -67,7 +67,7 @@ extension SystemStats {
         battery: .battery(percent: 82, state: .charging)
     )
 
-    /// RAM mostly in use, so the boss is merely annoyed.
+    /// RAM mostly in use, so Sam Altman is merely annoyed.
     static let previewAnnoyed = SystemStats(
         sampledAt: .now,
         ramTotalBytes: 16 * gib,

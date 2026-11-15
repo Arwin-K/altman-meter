@@ -1,17 +1,17 @@
 import SwiftUI
 import AppKit
 
-/// The boss's head as a die-cut sticker.
+/// Sam Altman's head as a die-cut sticker.
 ///
-/// It uses cut-out PNGs named `boss-furious`, `boss-annoyed` and `boss-confused`
+/// It uses cut-out PNGs named `altman-furious`, `altman-annoyed` and `altman-confused`
 /// from `Shared/Photos/` when they're in the bundle (make them with
-/// `Tools/MakeSticker.swift`), and draws an original cartoon boss when they aren't.
+/// `Tools/MakeAltmanSticker.swift`), and draws an original cartoon Sam Altman when they aren't.
 /// Either way the mood gets cartoon extras: angry brows, gritted teeth and steam
 /// when furious, a throbbing anger mark when annoyed, a question mark when confused.
 ///
 /// `animated` (menu bar panel only) makes him shake, sway or tilt. Widgets are
 /// static snapshots, so they leave it off. Changing `pokes` plays a squish.
-struct BossFaceView: View {
+struct AltmanFaceView: View {
     let mood: Mood
     var size: CGFloat = 64
     var animated = false
@@ -20,7 +20,7 @@ struct BossFaceView: View {
     var body: some View {
         let face = ZStack {
             Group {
-                if let photo = BossPhotos.image(for: mood) {
+                if let photo = AltmanPhotos.image(for: mood) {
                     PhotoFace(photo: photo, mood: mood, size: size)
                 } else {
                     CartoonFace(mood: mood, size: size)
@@ -44,14 +44,14 @@ struct BossFaceView: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("The boss looks \(mood.word.lowercased())")
+        .accessibilityLabel("Sam Altman looks \(mood.word.lowercased())")
     }
 }
 
-/// The boss's face as a button: clicking it pokes him (new line + squish).
-struct PokeableFace: View {
+/// Sam Altman's face as a button: clicking it gets a reaction and a new line.
+struct PokeableAltmanFace: View {
     enum Action {
-        /// Inside a desktop widget: runs `PokeBossIntent` in the widget extension.
+        /// Inside a desktop widget: runs `PokeAltmanIntent` in the widget extension.
         case widgetIntent
         /// In the app: runs a closure.
         case perform(() -> Void)
@@ -65,15 +65,15 @@ struct PokeableFace: View {
     var action: Action = .none
 
     var body: some View {
-        let face = BossFaceView(mood: mood, size: size, animated: animated, pokes: pokes)
+        let face = AltmanFaceView(mood: mood, size: size, animated: animated, pokes: pokes)
         switch action {
         case .widgetIntent:
-            Button(intent: PokeBossIntent()) { face }
+            Button(intent: PokeAltmanIntent()) { face }
                 .buttonStyle(.plain)
         case let .perform(poke):
             Button(action: poke) { face }
                 .buttonStyle(.plain)
-                .help("Poke him")
+                .help("Poke Sam Altman")
         case .none:
             face
         }
@@ -162,11 +162,11 @@ private struct Bob: ViewModifier {
 
 /// Loads (and caches) the optional cut-out photos from the current bundle. In the
 /// widget extension that's the widget's own bundle, which gets its own copy.
-enum BossPhotos {
+enum AltmanPhotos {
     private static let cache = NSCache<NSString, NSImage>()
 
     static func image(for mood: Mood) -> NSImage? {
-        let name = "boss-\(mood.rawValue)"
+        let name = "altman-\(mood.rawValue)"
         if let cached = cache.object(forKey: name as NSString) { return cached }
         for ext in ["png", "jpg", "jpeg"] {
             let url = Bundle.main.url(forResource: name, withExtension: ext)
@@ -187,8 +187,8 @@ private struct FaceGeometry {
     var mouthCenter: CGPoint
     var mouthSize: CGSize
 
-    /// Measured on `Shared/Photos/boss-furious.png` with Apple's Vision face landmarks
-    /// (`Tools/MakeSticker.swift` prints them). Brows tilt down toward the nose.
+    /// Measured on `Shared/Photos/altman-furious.png` with Apple's Vision face landmarks
+    /// (`Tools/MakeAltmanSticker.swift` prints them). Brows tilt down toward the nose.
     static let furiousPhoto = FaceGeometry(
         leftBrow: (CGPoint(x: 0.23, y: 0.39), CGPoint(x: 0.41, y: 0.465)),
         rightBrow: (CGPoint(x: 0.48, y: 0.465), CGPoint(x: 0.67, y: 0.39)),
@@ -472,7 +472,7 @@ private struct WavyMouth: Shape {
     HStack(spacing: 30) {
         ForEach(Mood.allCases, id: \.self) { mood in
             VStack {
-                BossFaceView(mood: mood, size: 120, animated: true)
+                AltmanFaceView(mood: mood, size: 120, animated: true)
                 Text(mood.word)
             }
         }

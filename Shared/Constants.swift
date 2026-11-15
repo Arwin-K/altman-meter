@@ -14,7 +14,7 @@ enum AppConstants {
     /// How often the menu bar panel updates while it's open.
     static let panelRefreshInterval: TimeInterval = 2
 
-    /// How long each boss line stays before the next one rotates in.
+    /// How long each Sam Altman line stays before the next one rotates in.
     static let quoteRotationInterval: TimeInterval = 10 * 60
 
     /// Shown in place of any reading that failed.

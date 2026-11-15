@@ -3,12 +3,12 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import AppKit
 
-// MakeSticker: cuts a head out of a photo as a die-cut "sticker" PNG for Altman Meter.
+// MakeAltmanSticker: cuts a head out of a photo as a die-cut sticker PNG for Altman Meter.
 // Everything runs on-device with Apple's Vision framework (subject lifting + face landmarks).
 //
 // Usage:
-//   swiftc -O Tools/MakeSticker.swift -o /tmp/makesticker
-//   /tmp/makesticker in.jpg Shared/Photos/boss-annoyed.png [sideMargin padTop chinPad outSize red]
+//   swiftc -O Tools/MakeAltmanSticker.swift -o /tmp/make-altman-sticker
+//   /tmp/make-altman-sticker in.jpg Shared/Photos/altman-annoyed.png [sideMargin padTop chinPad outSize red]
 //
 //   sideMargin  px of hair/ears kept past the jaw on each side (default 70)
 //   padTop      px of hair to extend upward by mirroring, if the photo cuts off the head (default 0)

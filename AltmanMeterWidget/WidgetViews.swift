@@ -26,7 +26,7 @@ struct AltmanMeterWidgetView: View {
 struct SmallWidgetView: View {
     let stats: SystemStats
     var pokes = 0
-    var poke: PokeableFace.Action = .widgetIntent
+    var poke: PokeableAltmanFace.Action = .widgetIntent
 
     var body: some View {
         GeometryReader { proxy in
@@ -53,7 +53,7 @@ struct SmallWidgetView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
-                PokeableFace(mood: mood, size: face, pokes: pokes, action: poke)
+                PokeableAltmanFace(mood: mood, size: face, pokes: pokes, action: poke)
                     .offset(x: face * 0.14, y: -face * 0.04)
             }
         }
@@ -67,7 +67,7 @@ struct SmallWidgetView: View {
 struct MediumWidgetView: View {
     let stats: SystemStats
     var pokes = 0
-    var poke: PokeableFace.Action = .widgetIntent
+    var poke: PokeableAltmanFace.Action = .widgetIntent
 
     var body: some View {
         WidgetCard(stats: stats, pokes: pokes, poke: poke)
@@ -79,7 +79,7 @@ struct MediumWidgetView: View {
 struct LargeWidgetView: View {
     let stats: SystemStats
     var pokes = 0
-    var poke: PokeableFace.Action = .widgetIntent
+    var poke: PokeableAltmanFace.Action = .widgetIntent
 
     var body: some View {
         GeometryReader { proxy in
@@ -89,7 +89,7 @@ struct LargeWidgetView: View {
                 HStack(alignment: .center, spacing: 6) {
                     // The mood badge sits on the bottom of his head like a sticker label.
                     ZStack(alignment: .bottom) {
-                        PokeableFace(mood: mood, size: face, pokes: pokes, action: poke)
+                        PokeableAltmanFace(mood: mood, size: face, pokes: pokes, action: poke)
                         MoodBadge(mood: mood, fontSize: 10.5)
                             .background(Color(nsColor: .windowBackgroundColor), in: Capsule())
                             .rotationEffect(.degrees(-4))

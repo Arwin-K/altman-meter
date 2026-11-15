@@ -39,7 +39,7 @@ struct MoodBadge: View {
     }
 }
 
-/// The boss's current line.
+/// Sam Altman's current line.
 struct QuoteText: View {
     let text: String
     var size: CGFloat = 12
@@ -57,7 +57,7 @@ struct QuoteText: View {
 /// Which side of the speech bubble the tail sticks out of.
 enum BubbleTail { case top, leading }
 
-/// A comic speech bubble whose tail points at the boss.
+/// A comic speech bubble whose tail points at Sam Altman.
 struct SpeechBubble<Content: View>: View {
     typealias Tail = BubbleTail
 
@@ -122,13 +122,13 @@ private struct BubbleShape: Shape {
     }
 }
 
-/// The medium-size card: the boss's head with a speech bubble on the left, stats
+/// The medium-size card: Sam Altman's head with a speech bubble on the left, stats
 /// on the right. Used by the medium desktop widget and, unchanged, by the menu
 /// bar panel so both look the same.
 struct WidgetCard: View {
     let stats: SystemStats
     var pokes = 0
-    var poke: PokeableFace.Action = .none
+    var poke: PokeableAltmanFace.Action = .none
     /// Panel only: idle animations, and a "Live" time with seconds.
     var live = false
 
@@ -141,7 +141,7 @@ struct WidgetCard: View {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(alignment: .center, spacing: 6) {
-                        PokeableFace(mood: mood, size: face, animated: live, pokes: pokes, action: poke)
+                        PokeableAltmanFace(mood: mood, size: face, animated: live, pokes: pokes, action: poke)
                         VStack(alignment: .leading, spacing: 3) {
                             MoodBadge(mood: mood)
                             VStack(alignment: .leading, spacing: 0) {

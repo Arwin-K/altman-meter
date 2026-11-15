@@ -1,13 +1,13 @@
 import SwiftUI
 
-/// The boss's mood. He is never happy: idle RAM makes him furious, busy RAM
+/// Sam Altman's mood. He is never happy: idle RAM makes him furious, busy RAM
 /// merely annoys him, and a failed reading leaves him confused.
 enum Mood: String, CaseIterable, Sendable {
     case furious
     case annoyed
     case confused
 
-    /// Tweak me: below this share of RAM in use, the boss is furious.
+    /// Tweak me: below this share of RAM in use, Sam Altman is furious.
     static let furiousBelowRAMFraction: Double = 0.60
 
     init(ramUsedFraction: Double?) {
@@ -49,7 +49,7 @@ enum Mood: String, CaseIterable, Sendable {
         }
     }
 
-    /// Lines for this mood. All jokes: the boss wants your RAM for his data centres.
+    /// Lines for this mood. All jokes: Sam Altman wants your RAM for his data centres.
     /// Keep each line under ~75 characters so it fits the widgets.
     var lines: [String] {
         switch self {

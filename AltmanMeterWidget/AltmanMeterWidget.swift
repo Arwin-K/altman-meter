@@ -11,7 +11,7 @@ struct StatsEntry: TimelineEntry {
 
 /// Gives WidgetKit a single entry with fresh readings, and asks for a new one
 /// in 15 minutes. The widget reads the stats itself, so no App Group is needed.
-/// Poking his face (PokeBossIntent) also triggers a reload.
+/// Poking his face (PokeAltmanIntent) also triggers a reload.
 struct StatsProvider: TimelineProvider {
     func placeholder(in context: Context) -> StatsEntry {
         StatsEntry(date: .now, stats: .previewFurious)
@@ -29,7 +29,7 @@ struct StatsProvider: TimelineProvider {
 
     private func currentEntry() -> StatsEntry {
         let now = Date()
-        return StatsEntry(date: now, stats: StatsReader.read(now: now), pokes: BossPokes.count)
+        return StatsEntry(date: now, stats: StatsReader.read(now: now), pokes: AltmanPokes.count)
     }
 }
 
@@ -39,7 +39,7 @@ struct AltmanMeterWidget: Widget {
             AltmanMeterWidgetView(entry: entry)
         }
         .configurationDisplayName("Altman Meter")
-        .description("RAM, disk and battery, judged by a boss who is never happy. Click his face to poke him.")
+        .description("RAM, disk and battery judged by Sam Altman. Tap his face for a reaction.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
