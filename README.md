@@ -5,10 +5,6 @@ A tiny Mac app that shows your RAM, free disk space and battery in two places:
 - a **desktop widget** (small, medium or large) that sits with your other widgets, and
 - a **menu bar item** with a live readout and a panel that looks like the medium widget.
 
-Both are judged by a boss who is never happy. If your RAM is mostly idle, he's **furious**:
-red face, gritted teeth, steam. If it's busy, he's still **annoyed**. If the reading fails,
-he's **confused**.
-
 Everything runs on your Mac. No network access, no accounts, no third-party code.
 
 ---
