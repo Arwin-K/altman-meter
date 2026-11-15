@@ -223,23 +223,3 @@ any file you drop into a folder is compiled into that folder's target automatica
 
 Open any view file in Xcode and show the canvas (⌥⌘↩) to see SwiftUI previews of each widget size
 and the menu bar panel.
-
-## 11. Shipping it to other people (maintainer only)
-
-Builds signed with a free Personal Team only work on your own Mac. **Never share them as
-downloads.** To publish a version anyone can install:
-
-1. Join the **Apple Developer Program** ($99/year) to get a **Developer ID** certificate.
-2. In Xcode: **Product → Archive**, then in the Organizer **Distribute App → Direct Distribution**.
-   Xcode signs it with Developer ID and gets it **notarized** by Apple.
-3. Package it:
-   - **ZIP:** `ditto -c -k --keepParent AltmanMeter.app AltmanMeter.zip`
-   - **DMG:**
-     ```sh
-     hdiutil create -volname "Altman Meter" -srcfolder AltmanMeter.app -ov -format UDZO AltmanMeter.dmg
-     codesign --sign "Developer ID Application: Your Name (TEAMID)" AltmanMeter.dmg
-     xcrun notarytool submit AltmanMeter.dmg --keychain-profile "notary" --wait
-     xcrun stapler staple AltmanMeter.dmg
-     ```
-     (Create the `notary` profile once with `xcrun notarytool store-credentials`.)
-4. Upload the .zip or .dmg to **GitHub Releases**. Don't commit it to the repo.
