@@ -7,6 +7,12 @@ A tiny Mac app that shows your RAM, free disk space and battery in two places:
 
 Everything runs on your Mac. No network access, no accounts, no third-party code.
 
+<p align="center">
+  <img src="docs/altman-meter-demo.gif" alt="Demo: the Altman Meter panel shows Sam Altman furious while the Mac is idle, calming to annoyed as RAM fills up, then reacting when his face is clicked." width="800">
+</p>
+
+<p align="center"><a href="docs/altman-meter-demo.mov">▶ Watch the demo video (.mov)</a></p>
+
 ---
 
 ## 1. Requirements
