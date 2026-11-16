@@ -23,36 +23,42 @@ enum DeepLinkHandler {
                 NSWorkspace.shared.open(url)
             }
         case .memory:
-            ActivityMonitor.showMemoryTab()
+            ActivityMonitor.show(.memory)
+        case .cpu:
+            ActivityMonitor.show(.cpu)
         }
     }
 }
 
-/// Opens Activity Monitor on its Memory tab.
+/// Opens Activity Monitor on a given tab.
 ///
 /// Activity Monitor has no URL or AppleScript for choosing a tab. It does remember
-/// the selected tab in its preferences (`SelectedTab`, where 1 = Memory) and reads
+/// the selected tab in its preferences (`SelectedTab`: 0 = CPU, 1 = Memory) and reads
 /// it at launch. So: if it's closed, set the preference and open it; if it's open on
-/// another tab, quit it and reopen it on Memory. Reading and writing that one
+/// another tab, quit it and reopen it on the one we want. Reading and writing that one
 /// preference is allowed by the `shared-preference` entitlement in
 /// `Config/AltmanMeter.entitlements`.
 @MainActor
 enum ActivityMonitor {
     private static let bundleID = "com.apple.ActivityMonitor"
     private static let tabKey = "SelectedTab" as CFString
-    private static let memoryTab = 1
 
-    static func showMemoryTab() {
+    enum Tab: Int {
+        case cpu = 0
+        case memory = 1
+    }
+
+    static func show(_ tab: Tab) {
         let running = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
-        log.notice("Memory link: Activity Monitor running=\(!running.isEmpty), saved tab=\(String(describing: currentTab()))")
+        log.notice("\(String(describing: tab)) link: Activity Monitor running=\(!running.isEmpty), saved tab=\(String(describing: currentTab()))")
         guard !running.isEmpty else {
-            launchOnMemoryTab()
+            launch(on: tab)
             return
         }
-        if currentTab() == memoryTab {
-            // Already on Memory: just bring it forward. (Opening it via NSWorkspace
+        if currentTab() == tab.rawValue {
+            // Already on that tab: just bring it forward. (Opening it via NSWorkspace
             // works from a menu bar app; NSRunningApplication.activate() doesn't.)
-            launchOnMemoryTab()
+            launch(on: tab)
             return
         }
         // It saves its own tab when it quits, so set ours only after it has gone.
@@ -65,7 +71,7 @@ enum ActivityMonitor {
                 try? await Task.sleep(nanoseconds: 100_000_000)
             }
             log.notice("Activity Monitor quit: \(running.allSatisfy(\.isTerminated))")
-            launchOnMemoryTab()
+            launch(on: tab)
         }
     }
 
@@ -74,8 +80,8 @@ enum ActivityMonitor {
         return CFPreferencesCopyAppValue(tabKey, bundleID as CFString) as? Int
     }
 
-    private static func launchOnMemoryTab() {
-        CFPreferencesSetAppValue(tabKey, memoryTab as CFNumber, bundleID as CFString)
+    private static func launch(on tab: Tab) {
+        CFPreferencesSetAppValue(tabKey, tab.rawValue as CFNumber, bundleID as CFString)
         CFPreferencesAppSynchronize(bundleID as CFString)
         guard let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) else { return }
         let configuration = NSWorkspace.OpenConfiguration()

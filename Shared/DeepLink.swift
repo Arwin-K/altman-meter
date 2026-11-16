@@ -6,10 +6,21 @@ import Foundation
 enum DeepLink: String {
     /// Activity Monitor, Memory tab.
     case memory
+    /// Activity Monitor, CPU tab (it also has the % GPU column).
+    case cpu
     /// System Settings → General → Storage.
     case storage
 
     static let scheme = "altmanmeter"
+
+    /// Tooltip for rows that open this link.
+    var helpText: String {
+        switch self {
+        case .memory: return "Open Activity Monitor → Memory"
+        case .cpu: return "Open Activity Monitor → CPU"
+        case .storage: return "Open Storage settings"
+        }
+    }
 
     var url: URL {
         URL(string: "\(DeepLink.scheme)://open/\(rawValue)")!

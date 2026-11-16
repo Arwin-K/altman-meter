@@ -1,6 +1,7 @@
 # Altman Meter
 
-A tiny Mac app that shows your RAM, free disk space and battery in two places:
+A tiny Mac app that shows your RAM, GPU and the other numbers that matter when you run local AI
+models (GPU memory, CPU, memory pressure, swap, heat and free disk space) in two places:
 
 - a **desktop widget** (small, medium or large) that sits with your other widgets, and
 - a **menu bar item** with a live readout and a panel that looks like the medium widget.
@@ -105,10 +106,16 @@ compile check that doesn't need a team.
 3. Choose **small**, **medium** or **large**.
 4. Drag it onto the desktop next to your other widgets, then click **Done**.
 
+**What each size shows:**
+- **Small:** RAM used %.
+- **Medium:** RAM, GPU busy % and free disk space.
+- **Large:** everything: RAM, GPU, GPU memory, CPU, memory pressure, swap, heat and free disk space.
+
 **Clicking the widget:**
-- **RAM** (the row marked ›, or anywhere on the small widget) opens **Activity Monitor on its
-  Memory tab**. If Activity Monitor is already open on a different tab, it quits and reopens on
-  Memory, because it has no way to switch tabs from outside.
+- **RAM, GPU memory, memory pressure and swap** (rows marked ›, or anywhere on the small widget)
+  open **Activity Monitor on its Memory tab**. **GPU and CPU** open its **CPU tab**, which has a
+  % GPU column. If Activity Monitor is already open on a different tab, it quits and reopens on the
+  right one, because it has no way to switch tabs from outside.
 - **Disk free** opens **System Settings → General → Storage**.
 - **His face** pokes him.
 
@@ -120,11 +127,11 @@ The rows in the menu bar panel work the same way.
   changes with Sam Altman's mood: a flame when furious, a storm cloud when annoyed, a question mark
   when confused. It updates every 5 seconds.
 - **Click it** to open the panel. It shows the same card as the medium widget (face, quote, RAM,
-  disk, battery), refreshing every 2 seconds while it's open. Here he's animated: he shakes when
+  GPU and free disk space), refreshing every 2 seconds while it's open. Here he's animated: he shakes when
   furious, sways when annoyed and tilts his head when confused.
 - **Poke him:** click his face, in the panel or on the desktop widget, for a reaction or a new
   line. Poking the widget also takes fresh readings.
-- **Menu bar shows:** pick *Icon only*, *RAM %* or *RAM GB*.
+- **Menu bar shows:** pick *Icon only*, *RAM %*, *RAM GB* or *GPU %*.
 - **Open at login:** turn it on to start Altman Meter when you log in. macOS may ask you to approve
   it; if the panel says "Needs your approval", click **Open Login Items…** and switch on
   Altman Meter under "Allow in the Background" / "Open at Login".
@@ -159,10 +166,7 @@ and press Delete) so it falls back to the xcconfig.
 On MacBooks with a notch, menu bar items that don't fit get hidden behind it. Quit a few other
 menu bar apps, or ⌘-drag less important icons out of the menu bar to make room.
 
-**Battery says "No battery"**
-That's expected on desktop Macs (iMac, Mac mini, Mac Studio, Mac Pro).
-
-**Clicking RAM or Disk free does nothing**
+**Clicking a row does nothing**
 The click goes through the Altman Meter app, so it must be installed in /Applications. Delete any
 other copies (old Xcode build folders count) so macOS doesn't send the click to the wrong one.
 
@@ -175,14 +179,21 @@ That reading failed. The app keeps running and tries again on the next refresh.
 | --- | --- | --- |
 | **RAM used / total** | Memory in use, counted like Activity Monitor's "Memory Used": app memory (internal pages minus purgeable) + wired + compressed. Total is installed RAM. | `host_statistics64(HOST_VM_INFO64)` and `ProcessInfo.physicalMemory` |
 | **Free disk space** | Free space on your startup disk, including space macOS can free up from caches, which matches Finder. | `volumeAvailableCapacityForImportantUsage` on `/`, falling back to `volumeAvailableCapacity` |
-| **Battery** | Charge %, plus charging / charged / plugged in, not charging / on battery. Internal battery only. | IOKit `IOPSCopyPowerSourcesInfo` / `IOPSCopyPowerSourcesList` |
+| **GPU** | How busy the GPU is right now. Near 100% while a local model is generating text is normal. | `Device Utilization %` from the GPU driver's `PerformanceStatistics` in the IORegistry (`IOAccelerator`) |
+| **GPU memory** | Memory the GPU has in use (loaded model weights, context cache) out of the most macOS lets it use. "Left for models" is roughly how big a model you can still load. On Apple silicon this comes out of the same RAM. | In use: `In use system memory` from the same IORegistry stats. Limit: `iogpu.wired_limit_mb` if you've raised it, otherwise Metal's `recommendedMaxWorkingSetSize` |
+| **CPU** | Share of all cores busy since the last reading. | `host_statistics(HOST_CPU_LOAD_INFO)`, compared between two readings |
+| **Memory pressure** | Normal / Warning / Critical, like Activity Monitor's Memory Pressure graph. Warning or Critical while a model runs means it doesn't really fit. | `kern.memorystatus_vm_pressure_level` and `kern.memorystatus_level` sysctls |
+| **Swap used** | Memory macOS has written out to disk. A few GB of swap while a model runs makes it much slower. | `vm.swapusage` sysctl |
+| **Heat** | Nominal / Fair / Serious / Critical. Above Fair, macOS slows the chip down and tokens per second drop. Also says whether Low Power Mode is on. | `ProcessInfo.thermalState` and `isLowPowerModeEnabled` |
 
-**Why there's no "memory pressure":** macOS has no public API that reports the *current*
-memory-pressure level reliably. `DispatchSource.makeMemoryPressureSource` only fires when the
-level *changes*, so a widget that starts up fresh can't ask "what is it now?". The
-`kern.memorystatus_vm_pressure_level` sysctl does answer that, but it's undocumented and could
-change or disappear in any macOS update. Rather than show a number that might be wrong, Altman
-Meter leaves it out.
+**About memory pressure:** macOS has no documented API for the *current* pressure level, so it
+comes from the `kern.memorystatus_*` sysctls. They're what Apple's own `memory_pressure` tool
+reads, but they're undocumented and could change in a future macOS update. If they stop working,
+the row shows "—" instead of a wrong number.
+
+**Raising the GPU memory limit:** by default macOS lets the GPU use about 2/3 to 3/4 of RAM. Tools
+like LM Studio and llama.cpp users sometimes raise it with
+`sudo sysctl iogpu.wired_limit_mb=<MB>` (resets on restart). Altman Meter picks up the new limit.
 
 **Privacy:** all readings happen on your Mac. The app and widget are sandboxed, have no network
 access, and send nothing anywhere.

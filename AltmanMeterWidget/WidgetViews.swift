@@ -74,8 +74,9 @@ struct MediumWidgetView: View {
     }
 }
 
-/// Large: a big head with a speech bubble on top; every stat with a bar and detail line below.
-/// Sizes follow the space macOS gives the widget, so nothing gets clipped.
+/// Large: his head with a speech bubble on top, then every stat in a two-column
+/// grid with a bar and a detail line each. Sizes follow the space macOS gives the
+/// widget, so nothing gets clipped.
 struct LargeWidgetView: View {
     let stats: SystemStats
     var pokes = 0
@@ -84,34 +85,47 @@ struct LargeWidgetView: View {
     var body: some View {
         GeometryReader { proxy in
             let mood = Mood(stats: stats)
-            let face = min(124, proxy.size.height * 0.31)
+            let face = min(84, proxy.size.height * 0.24)
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .center, spacing: 6) {
                     // The mood badge sits on the bottom of his head like a sticker label.
                     ZStack(alignment: .bottom) {
                         PokeableAltmanFace(mood: mood, size: face, pokes: pokes, action: poke)
-                        MoodBadge(mood: mood, fontSize: 10.5)
+                        MoodBadge(mood: mood, fontSize: 9.5)
                             .background(Color(nsColor: .windowBackgroundColor), in: Capsule())
                             .rotationEffect(.degrees(-4))
-                            .offset(y: 8)
+                            .offset(y: 7)
                     }
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 7)
                     SpeechBubble(tail: .leading, tailPosition: face * 0.4) {
-                        QuoteText(text: mood.quote(at: stats.sampledAt, pokes: pokes), size: 14, lineLimit: 4)
+                        QuoteText(text: mood.quote(at: stats.sampledAt, pokes: pokes), size: 12.5, lineLimit: 3)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
-                Spacer(minLength: 6)
+                Spacer(minLength: 4)
                 Divider()
-                Spacer(minLength: 6)
-                VStack(alignment: .leading, spacing: 9) {
-                    StatRow.ram(stats, mood: mood, style: .regular)
-                    StatRow.disk(stats, style: .regular)
-                    StatRow.battery(stats, style: .regular)
+                Spacer(minLength: 4)
+                Grid(alignment: .topLeading, horizontalSpacing: 14, verticalSpacing: 7) {
+                    GridRow {
+                        StatRow.ram(stats, mood: mood, style: .tile)
+                        StatRow.gpu(stats, style: .tile)
+                    }
+                    GridRow {
+                        StatRow.gpuMemory(stats, style: .tile)
+                        StatRow.cpu(stats, style: .tile)
+                    }
+                    GridRow {
+                        StatRow.pressure(stats, style: .tile)
+                        StatRow.swap(stats, style: .tile)
+                    }
+                    GridRow {
+                        StatRow.thermal(stats, style: .tile)
+                        StatRow.disk(stats, style: .tile)
+                    }
                 }
                 Spacer(minLength: 4)
                 Text("\(StatFormat.sampled(stats.sampledAt)) · click his face to poke him")
-                    .font(.system(size: 10))
+                    .font(.system(size: 9.5))
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
                     .lineLimit(1)

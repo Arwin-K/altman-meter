@@ -5,6 +5,7 @@ enum BarDisplay: String, CaseIterable, Identifiable {
     case iconOnly
     case ramPercent
     case ramUsedGB
+    case gpuPercent
 
     static let storageKey = "menuBarDisplay"
     static let defaultValue = BarDisplay.ramPercent
@@ -16,6 +17,7 @@ enum BarDisplay: String, CaseIterable, Identifiable {
         case .iconOnly: return "Icon only"
         case .ramPercent: return "RAM %"
         case .ramUsedGB: return "RAM GB"
+        case .gpuPercent: return "GPU %"
         }
     }
 
@@ -25,6 +27,7 @@ enum BarDisplay: String, CaseIterable, Identifiable {
         case .iconOnly: return nil
         case .ramPercent: return StatFormat.percent(stats.ramUsedFraction)
         case .ramUsedGB: return StatFormat.memory(stats.ramUsedBytes)
+        case .gpuPercent: return "GPU \(StatFormat.percent(stats.gpuUtilization))"
         }
     }
 }

@@ -35,54 +35,55 @@ enum StatFormat {
         return "\(gb.formatted(.number.precision(.fractionLength(digits)))) GB"
     }
 
-    /// "82%", "No battery" or "—"
-    static func batteryValue(_ battery: BatteryReading) -> String {
-        switch battery {
-        case .noBattery: return "No battery"
-        case .unavailable: return missing
-        case let .battery(percent, _): return "\(percent)%"
+    /// Memory that can be small, like swap: "0 MB", "215 MB", "2.3 GB".
+    static func memoryShort(_ bytes: UInt64?) -> String {
+        guard let bytes else { return missing }
+        if bytes < 1 << 30 {
+            return "\(Int((Double(bytes) / Double(1 << 20)).rounded())) MB"
+        }
+        return memory(bytes)
+    }
+
+    /// GPU memory in use of the limit: "9.5 / 13.3 GB"
+    static func gpuMemory(_ stats: SystemStats) -> String {
+        let used = stats.gpuMemoryInUseBytes.map(gigabytes) ?? missing
+        let limit = stats.gpuMemoryLimitBytes.map(gigabytes) ?? missing
+        return "\(used) / \(limit) GB"
+    }
+
+    /// "Normal", "Warning", "Critical"
+    static func pressure(_ pressure: MemoryPressure?) -> String {
+        switch pressure {
+        case .normal: return "Normal"
+        case .warning: return "Warning"
+        case .critical: return "Critical"
+        case nil: return missing
         }
     }
 
-    /// "Charging", "Charged", "Plugged in, not charging", "On battery"
-    static func batteryState(_ battery: BatteryReading) -> String? {
-        guard case let .battery(_, state) = battery else { return nil }
-        switch state {
-        case .charging: return "Charging"
-        case .charged: return "Charged"
-        case .pluggedInNotCharging: return "Plugged in, not charging"
-        case .onBattery: return "On battery"
+    /// "Nominal", "Fair", "Serious", "Critical"
+    static func thermal(_ thermal: ThermalLevel?) -> String {
+        switch thermal {
+        case .nominal: return "Nominal"
+        case .fair: return "Fair"
+        case .serious: return "Serious"
+        case .critical: return "Critical"
+        case nil: return missing
         }
     }
 
-    /// Shorter state words for narrow spaces: "Plugged in" instead of "Plugged in, not charging".
-    static func batteryStateShort(_ battery: BatteryReading) -> String? {
-        guard case let .battery(_, state) = battery else { return nil }
-        return state == .pluggedInNotCharging ? "Plugged in" : batteryState(battery)
+    /// "M3 Pro · 14-core GPU" (drops the "Apple " prefix to save room)
+    static func chipLine(_ stats: SystemStats) -> String {
+        var name = stats.chipName ?? missing
+        if name.hasPrefix("Apple ") { name.removeFirst("Apple ".count) }
+        guard let cores = stats.gpuCoreCount else { return name }
+        return "\(name) · \(cores)-core GPU"
     }
 
-    /// "82% · Charging", or just "No battery" / "—"
-    static func batteryLine(_ battery: BatteryReading) -> String {
-        let value = batteryValue(battery)
-        guard let state = batteryState(battery) else { return value }
-        return "\(value) · \(state)"
-    }
-
-    /// SF Symbol for the battery row.
-    static func batterySymbol(_ battery: BatteryReading) -> String {
-        switch battery {
-        case .noBattery: return "powerplug"
-        case .unavailable: return "battery.0percent"
-        case let .battery(percent, state):
-            if state == .charging { return "battery.100percent.bolt" }
-            switch percent {
-            case ..<13: return "battery.0percent"
-            case ..<38: return "battery.25percent"
-            case ..<63: return "battery.50percent"
-            case ..<88: return "battery.75percent"
-            default: return "battery.100percent"
-            }
-        }
+    /// "5P + 6E cores", or nil on Intel Macs (which don't report core types).
+    static func cpuCores(_ stats: SystemStats) -> String? {
+        guard let p = stats.performanceCores, let e = stats.efficiencyCores else { return nil }
+        return "\(p)P + \(e)E cores"
     }
 
     /// "1:42 PM"

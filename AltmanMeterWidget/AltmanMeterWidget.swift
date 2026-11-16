@@ -39,7 +39,7 @@ struct AltmanMeterWidget: Widget {
             AltmanMeterWidgetView(entry: entry)
         }
         .configurationDisplayName("Altman Meter")
-        .description("RAM, disk and battery judged by Sam Altman. Tap his face for a reaction.")
+        .description("RAM, GPU and memory health for local models, judged by Sam Altman. Tap his face for a reaction.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }

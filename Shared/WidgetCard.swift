@@ -166,9 +166,9 @@ struct WidgetCard: View {
                 VStack(alignment: .leading, spacing: 0) {
                     StatRow.ram(stats, mood: mood)
                     Spacer(minLength: 4)
-                    StatRow.disk(stats)
+                    StatRow.gpu(stats)
                     Spacer(minLength: 4)
-                    StatRow.battery(stats)
+                    StatRow.disk(stats)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
